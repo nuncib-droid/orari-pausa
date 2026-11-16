@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pausa">
+<meta name="theme-color" content="#0b1f1b">
+<meta name="color-scheme" content="light dark">
+<title>Orari Pausa</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%231f6f62'/%3E%3Ccircle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='7'/%3E%3Cpath d='M50 34v17l11 7' fill='none' stroke='white' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231f6f62'/%3E%3Ccircle cx='50' cy='50' r='28' fill='none' stroke='white' stroke-width='7'/%3E%3Cpath d='M50 34v17l11 7' fill='none' stroke='white' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#eef3f1; --surface:rgba(255,255,255,.72); --solid:#fff; --ink:#10201c; --muted:#5f716c; --faint:#9aaba6; --line:rgba(16,32,28,.08);
+    --accent:#0f8a73; --accent-2:#37c3a5; --accent-soft:rgba(15,138,115,.14); --on-accent:#fff;
+    --warm:#b4531a; --warm-soft:rgba(240,140,60,.16);
+    --glow1:rgba(55,195,165,.45); --glow2:rgba(120,170,255,.35);
+    --shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 10px 30px rgba(16,60,50,.10);
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","SF Pro Display","Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#07100e; --surface:rgba(255,255,255,.07); --solid:#12201d; --ink:#eef6f3; --muted:#9db3ad; --faint:#5f7771; --line:rgba(255,255,255,.10);
+      --accent:#4fe0bf; --accent-2:#1fa88c; --accent-soft:rgba(79,224,191,.15); --on-accent:#04251e;
+      --warm:#ffb27a; --warm-soft:rgba(255,160,90,.14);
+      --glow1:rgba(31,168,140,.40); --glow2:rgba(80,110,255,.28);
+      --shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 12px 32px rgba(0,0,0,.35); }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{background:var(--bg);height:100%;-webkit-text-size-adjust:100%}
+  body{margin:0;min-height:100vh;min-height:100dvh;color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(520px 420px at 105% -5%, var(--glow1), transparent 70%),
+      radial-gradient(480px 420px at -10% 105%, var(--glow2), transparent 70%),
+      var(--bg);
+    background-attachment:fixed;overscroll-behavior-y:none;-webkit-user-select:none;user-select:none}
+  main{min-height:100vh;min-height:100dvh;max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:10px;
+    padding:calc(env(safe-area-inset-top) + 18px) calc(env(safe-area-inset-right) + 16px) calc(env(safe-area-inset-bottom) + 16px) calc(env(safe-area-inset-left) + 16px)}
+
+  header{display:flex;align-items:flex-end;justify-content:space-between;padding:6px 4px 2px}
+  h1{font-weight:800;font-size:34px;letter-spacing:-.035em;margin:0;line-height:1}
+  .date{color:var(--muted);font-size:14px;font-weight:600;text-transform:capitalize;padding-bottom:4px}
+
+  .card{background:var(--surface);-webkit-backdrop-filter:blur(24px) saturate(1.6);backdrop-filter:blur(24px) saturate(1.6);
+    border:1px solid var(--line);border-radius:26px;padding:16px 18px;box-shadow:var(--shadow)}
+  .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin:0 0 12px}
+
+  .entry{display:flex;gap:10px;align-items:stretch}
+  .field{flex:1;min-width:0}
+  #out{width:100%;font-family:var(--font);font-weight:700;font-size:40px;letter-spacing:-.02em;text-align:center;
+    font-variant-numeric:tabular-nums;color:var(--ink);background:var(--accent-soft);border:2px solid transparent;
+    border-radius:20px;padding:10px 12px;outline:none;transition:border-color .15s, background .15s;-webkit-user-select:text;user-select:text;-webkit-appearance:none}
+  #out::placeholder{color:var(--faint)}
+  #out:focus{border-color:var(--accent);background:var(--solid)}
+  #now{font:inherit;font-weight:700;font-size:16px;border:0;border-radius:20px;padding:0 20px;
+    background:linear-gradient(135deg,var(--accent-2),var(--accent));color:var(--on-accent);cursor:pointer;
+    box-shadow:0 6px 16px var(--accent-soft);transition:transform .12s}
+  #now:active{transform:scale(.94)}
+
+  #result{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .empty{color:var(--muted);font-size:16px;text-align:center;padding:26px 8px;line-height:1.55}
+  .empty .ico{display:block;font-size:44px;margin-bottom:10px;opacity:.55}
+  .empty b{color:var(--ink)}
+  .hero{text-align:center;padding:6px 0 4px}
+  .hero .k{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+  .hero .v{font-weight:800;font-size:clamp(64px,20vw,84px);line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums;margin:6px 0 6px;
+    background:linear-gradient(135deg,var(--accent-2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .s{color:var(--muted);font-size:14px;font-weight:500}
+
+  .tl{margin:26px 4px 4px;position:relative;height:54px}
+  .tl .bar{position:absolute;left:0;right:0;top:20px;height:10px;border-radius:10px;background:var(--accent-soft)}
+  .tl .fill{position:absolute;top:20px;height:10px;border-radius:10px;background:linear-gradient(90deg,var(--accent-2),var(--accent))}
+  .tl .tick{position:absolute;top:15px;width:2px;height:20px;border-radius:2px;background:var(--faint);opacity:.6;transform:translateX(-1px)}
+  .tl .dot{position:absolute;top:15px;width:20px;height:20px;border-radius:50%;background:var(--solid);border:4px solid var(--accent);transform:translateX(-10px);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+  .tl .dot.real{border-color:var(--muted);width:13px;height:13px;top:18.5px;transform:translateX(-6.5px)}
+  .tl .lab{position:absolute;top:42px;font-size:12px;font-weight:700;color:var(--muted);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .tl .lab.top{top:-8px;font-weight:600;color:var(--faint)}
+  .tl .lab.l{transform:none}
+
+  .rows{margin-top:8px;border-top:1px solid var(--line)}
+  .r{display:flex;justify-content:space-between;align-items:baseline;padding:9px 2px;border-bottom:1px solid var(--line);font-size:15px}
+  .r:last-child{border-bottom:0}
+  .r span{color:var(--muted)}
+  .r b{font-weight:700;font-variant-numeric:tabular-nums}
+
+  .warn{display:flex;gap:10px;align-items:flex-start;background:var(--warm-soft);color:var(--warm);border-radius:18px;padding:13px 15px;font-size:14px;line-height:1.4;margin-top:10px;font-weight:600}
+  .warn .i{flex:none;width:20px;height:20px;border-radius:50%;background:var(--warm);color:var(--solid);font-size:13px;display:grid;place-items:center;margin-top:1px}
+  .tip{color:var(--muted);font-size:13px;margin-top:10px;text-align:center;line-height:1.45}
+  .tip.ok{color:var(--accent);font-weight:600}
+
+  .set{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .set span{font-weight:700;font-size:15px}
+  .seg{display:flex;background:var(--accent-soft);border-radius:16px;padding:4px;gap:2px}
+  .seg button{font:inherit;font-size:14px;font-weight:700;border:0;background:transparent;color:var(--muted);
+    padding:9px 12px;border-radius:12px;cursor:pointer;font-variant-numeric:tabular-nums;transition:background .15s,color .15s}
+  .seg button.on{background:var(--solid);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+
+  .foot{text-align:center;color:var(--faint);font-size:12px;line-height:1.5;margin:2px 0 0}
+
+  .fade{animation:fade .3s cubic-bezier(.2,.8,.2,1)}
+  @keyframes fade{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.fade{animation:none}}
+  @media (max-height:700px){.hero .v{font-size:64px}.tl{margin-top:26px}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Pausa</h1>
+    <div class="date" id="date"></div>
+  </header>
+
+  <section class="card">
+    <p class="label">Uscita timbrata alle</p>
+    <div class="entry">
+      <div class="field"><input type="text" id="out" inputmode="numeric" autocomplete="off" placeholder="12:00" maxlength="5"></div>
+      <button id="now">Adesso</button>
+    </div>
+  </section>
+
+  <section class="card" id="result"></section>
+
+  <section class="card">
+    <div class="set">
+      <span>Durata pausa</span>
+      <div class="seg" id="pause">
+        <button data-v="30">30′</button><button data-v="45">45′</button><button data-v="60">1h</button><button data-v="90">1h30</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Uscita arrotondata per difetto, rientro per eccesso,<br>al quarto d'ora. Tolleranza di 1 minuto.</p>
+</main>
+
+<script>
+(function(){
+  const Q = 15, TOL = 1, $ = id => document.getElementById(id);
+
+  // accetta 1210, 12:10, 12.10, 910
+  const toMin = s => {
+    if(!s) return null;
+    const d = s.replace(/\D/g,'');
+    if(d.length < 3 || d.length > 4) return null;
+    const h = parseInt(d.slice(0,d.length-2),10), m = parseInt(d.slice(-2),10);
+    if(h > 23 || m > 59) return null;
+    return h*60+m;
+  };
+  const fmt = m => { m=((m%1440)+1440)%1440; return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'); };
+  const get = (k,d) => { try{ const v=localStorage.getItem(k); return v===null?d:v; }catch(e){ return d; } };
+  const set = (k,v) => { try{ localStorage.setItem(k,v); }catch(e){} };
+
+  try{ $('date').textContent = new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'}); }catch(e){}
+
+  let pz = parseInt(get('op-pause','30'),10);
+  function paintSeg(){ [...$('pause').children].forEach(b => b.classList.toggle('on', +b.dataset.v === pz)); }
+  paintSeg();
+
+  function render(){
+    const raw = $('out').value, out = toMin(raw);
+    const box = $('result');
+    if(out === null){
+      const invalid = raw.replace(/\D/g,'').length >= 3;
+      box.innerHTML = `<div class="empty"><span class="ico">${invalid ? '⚠︎' : '◷'}</span>${invalid
+        ? 'Orario non valido'
+        : 'Scrivi l\'orario in cui hai timbrato<br>l\'uscita, per esempio <b>1210</b>'}</div>`;
+      return;
+    }
+    const counted = Math.floor(out/Q)*Q;
+    const bestOut = counted + TOL;
+    const lost = Math.max(0, out - bestOut);
+    const back = counted + pz;
+    const bestBack = back - TOL;
+
+    // timeline: da uscita conteggiata a rientro +15
+    const start = counted, end = back + Q, span = end - start;
+    const pos = m => ((m - start) / span * 100).toFixed(2) + '%';
+    let ticks = '';
+    for(let t = start + Q; t < end; t += Q) ticks += `<div class="tick" style="left:${pos(t)}"></div>`;
+
+    box.innerHTML = `<div class="fade">
+      <div class="hero">
+        <div class="k">Rientra alle</div>
+        <div class="v">${fmt(bestBack)}</div>
+        <div class="s">Ti conta le ${fmt(back)} · ultimo minuto utile ${fmt(back)}</div>
+      </div>
+
+      <div class="tl">
+        <div class="bar"></div>
+        <div class="fill" style="left:0;width:${pos(back)}"></div>
+        ${ticks}
+        ${out > counted ? `<div class="dot real" style="left:${pos(out)}"></div><div class="lab top" style="left:${pos(out)}">timbrata ${fmt(out)}</div>` : ''}
+        <div class="dot" style="left:${pos(bestBack)}"></div>
+        <div class="lab l" style="left:0">${fmt(counted)}</div>
+        <div class="lab" style="left:${pos(bestBack)}">${fmt(bestBack)}</div>
+      </div>
+
+      <div class="rows">
+        <div class="r"><span>Uscita conteggiata</span><b>${fmt(counted)}</b></div>
+      </div>
+
+      <div class="warn"><span class="i">!</span><span>Dalle ${fmt(back+1)} il rientro ti conta alle ${fmt(back+Q)}: perdi un quarto d'ora.</span></div>
+
+      <div class="tip ${lost ? '' : 'ok'}">${lost
+        ? `Suggerimento: uscendo alle ${fmt(bestOut)} avresti avuto ${lost} min di pausa in più.`
+        : `Uscita perfetta ✓`}</div>
+    </div>`;
+  }
+
+  $('out').addEventListener('input', e => {
+    const d = e.target.value.replace(/\D/g,'').slice(0,4);
+    e.target.value = d.length >= 3 ? d.slice(0,d.length-2)+':'+d.slice(-2) : d;
+    render();
+  });
+  $('out').addEventListener('keydown', e => { if(e.key === 'Enter') e.target.blur(); });
+  $('now').addEventListener('click', () => { const d=new Date(); $('out').value = fmt(d.getHours()*60+d.getMinutes()); render(); });
+  $('pause').addEventListener('click', e => {
+    const b = e.target.closest('button'); if(!b) return;
+    pz = +b.dataset.v; set('op-pause', String(pz)); paintSeg(); render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
